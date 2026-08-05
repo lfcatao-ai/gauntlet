@@ -37,3 +37,15 @@ como banco de dados (via GitHub API).
 - **Modo TV:** abrir `…/gauntlet/#tv&room=SUASALA&t=TOKEN` num navegador qualquer vira placar
   gigante ao vivo da sala (atualiza a cada 4s).
 - 4 desafios novos: 🎈 ENCOLHE (push-your-luck), 👀 OLHO VIVO, 🔠 SOLETRA, 🎵 NO RITMO.
+
+## v6
+
+- **PWA**: "adicionar à tela de início" instala o GAUNTLET como app (fullscreen, ícone próprio).
+  O service worker é network-first: com rede, sempre carrega a versão mais nova.
+- **Modificadores de rodada** (sorteados pela semente, anunciados no 1º desafio):
+  CLÁSSICA · ⚡ RELÂMPAGO (12% mais rápido) · ⭐ DUPLA DOURADA (2 vale-dobro) ·
+  👹 BOSS TRIPLO (boss 3×) · 🔥 COMBO QUENTE (bônus de combo 2×).
+- **Placar da rodada ao vivo** na tela de resultado, com rival marcado ("faltaram X pts
+  pra passar FULANO").
+- **🏛️ Hall da Fama**: maiores rodadas da história + acumulado all-time (todas as salas).
+- Mute persistente e vibração (Android) nos momentos de impacto.
