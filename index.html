@@ -157,6 +157,11 @@
     <button class="btn btn-go" id="b-ready">Entrar na arena</button>
     <button class="btn btn-alt" id="b-rank">🏆 Ranking da noite</button>
     <p class="err" id="homesync" style="color:var(--muted)"></p>
+    <button class="tiny" id="b-token">⚙️ colar token do sync</button>
+    <div class="addrow" id="tokrow" style="display:none">
+      <input type="text" id="tokin" placeholder="github_pat_…" autocomplete="off">
+      <button class="btn btn-cy" id="b-toksave">OK</button>
+    </div>
     <div class="rules">
       <b>Ritual da mesa:</b> todo mundo digita o <b>mesmo código de sala</b>, entra na arena
       e espera. Alguém grita <b>"3, 2, 1, VAI!"</b> e todos tocam JOGAR juntos — dali em diante
@@ -1293,9 +1298,21 @@
   $('b-host').addEventListener('click',hostStart);
   var hs=$('homesync');
   if(hs){
-    hs.textContent = TOKEN ? '🌐 ranking automático: ATIVO ✓' : '⚠️ SEM TOKEN — ranking e largada automáticos DESLIGADOS. Abra pelo link do grupo (com #t=…)';
+    hs.textContent = TOKEN ? '🌐 ranking automático: ATIVO ✓' : '⚠️ SEM TOKEN — ranking e largada automáticos DESLIGADOS. Abra pelo link do grupo (com #t=…) ou cole o token abaixo';
     hs.style.color = TOKEN ? 'var(--ok)' : 'var(--gold)';
   }
+  $('b-token').addEventListener('click',function(){
+    var tr=$('tokrow');
+    tr.style.display = tr.style.display==='none' ? 'flex' : 'none';
+  });
+  $('b-toksave').addEventListener('click',function(){
+    var t=($('tokin').value||'').trim();
+    if(!t){ $('tokin').focus(); return; }
+    TOKEN=t;
+    try{ localStorage.setItem('gg-token',t); }catch(e){}
+    $('tokin').value=''; $('tokrow').style.display='none';
+    if(hs){ hs.textContent='🌐 ranking automático: ATIVO ✓'; hs.style.color='var(--ok)'; }
+  });
   var TV=false;
   try{
     var hp2=new URLSearchParams(location.hash.slice(1));
