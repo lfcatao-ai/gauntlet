@@ -143,7 +143,7 @@
 
   <!-- HOME -->
   <div class="scr on" id="scr-home">
-    <p class="eyebrow">7 celulares · 1 mesa · 0 desculpas · <b style="color:var(--cy)">V5 ONLINE 🌐</b></p>
+    <p class="eyebrow">7 celulares · 1 mesa · 0 desculpas · <b style="color:var(--cy)">V5.1 ONLINE 🌐</b></p>
     <h1>GAUNT<span class="em">LET</span> ⚡</h1>
     <p class="sub">15 micro-desafios sorteados de <b style="color:var(--ink)">16 tipos</b> + um
       <b style="color:var(--bad)">👹 BOSS FINAL</b> de 3 desafios brutais valendo 2× em velocidade
@@ -174,7 +174,7 @@
   <div class="scr" id="scr-ready">
     <div id="rd-round">Rodada 1</div>
     <div id="rd-room">SALA</div>
-    <div style="color:var(--accent);font-size:.78rem;font-weight:800;letter-spacing:.18em;margin-bottom:8px">V5 ONLINE 🌐 — LARGADA SINCRONIZADA</div>
+    <div style="color:var(--accent);font-size:.78rem;font-weight:800;letter-spacing:.18em;margin-bottom:8px">V5.1 ONLINE 🌐 — LARGADA SINCRONIZADA</div>
     <p class="sub" style="text-align:center">Todo mundo pronto nesta tela?<br>
       No grito de <b style="color:var(--ink)">"VAI!"</b>, todos tocam JOGAR ao mesmo tempo.</p>
     <div id="count">3</div>
@@ -235,11 +235,11 @@
 (function(){
   'use strict';
   var $=function(id){return document.getElementById(id)};
-  var N=15, TYPES=20, TOT=18, VER='v5'; // tipo 1 (NÃO TOQUE) fora do sorteio
-  var DUR =[4000,3500,4000,3000,5800,3500,4000,5000,3500,4000,5000,4500,5000,4500,5000,4500,4200,5000,5000,5200];
+  var N=15, TYPES=23, TOT=18, VER='v5.1'; // tipo 1 (NÃO TOQUE) fora do sorteio
+  var DUR =[4000,3500,4000,3000,5800,3500,4000,5000,3500,4000,5000,4500,5000,4500,5000,4500,4200,5000,5000,5200,4000,3800,4000];
   var GNAME=['VERDE!','NÃO TOQUE!','CALCULA!','ESMAGA!','MEMORIZA!','NO CENTRO!','O DIFERENTE!','1 AO 5!',
              'A TINTA!','O MAIOR!','MIRA!','ARRASTA!','CONTA!','CONTRÁRIO!','SEGURA 3s!','PAR OU ÍMPAR!',
-             'ENCOLHE!','OLHO VIVO!','SOLETRA!','NO RITMO!'];
+             'ENCOLHE!','OLHO VIVO!','SOLETRA!','NO RITMO!','RODA!','PARE EM…!','COLISÃO!'];
   var GINST=['Toque quando a tela ficar VERDE',
              'Resista. NÃO toque em nada!',
              'Toque na resposta certa',
@@ -259,8 +259,11 @@
              'Quanto mais esperar, mais vale… até estourar',
              'Decore a grade — toque no que MUDOU',
              'Toque as letras na ordem da palavra',
-             'Toque 4 vezes no compasso da pulsação'];
-  var GICON=['🟢','🚫','🧮','👊','🧠','🎯','🔍','🔢','🎨','📈','🏹','👉','🍕','🙃','⌛','🎲','🎈','👀','🔠','🎵'];
+             'Toque 4 vezes no compasso da pulsação',
+             'Pare o ponteiro na janela dourada',
+             'Trave a barra exatamente no número alvo',
+             'Toque no instante em que os blocos se cruzarem'];
+  var GICON=['🟢','🚫','🧮','👊','🧠','🎯','🔍','🔢','🎨','📈','🏹','👉','🍕','🙃','⌛','🎲','🎈','👀','🔠','🎵','🎡','⚡','🤝'];
   var EMO17=['🍕','⚽','🐸','⭐','🍺','👾','🎩','🍇','🚀','🦄','🍩','🐙'];
   var WORDS=['BOLA','GALO','MESA','LUAR','VELA','RATO','PATO','CEDO'];
   var CONS='BCDFGHJKMNPQSVXZ';
@@ -395,6 +398,9 @@
         for(var m15=0;m15<3;m15++) p.nums3.push(10+Math.floor(rng()*90));
       }
       else if(t===16){ p.vanish=0.55+rng()*0.35; }
+      else if(t===20){ p.speed=0.7+rng()*0.5; p.wedge=rng()*360; p.ph=rng()*360; }
+      else if(t===21){ p.tgt=55+Math.floor(rng()*41); p.spd=0.85+rng()*0.4; }
+      else if(t===22){ p.spd=0.5+rng()*0.35; p.ph=rng()*6.283; p.dphi=0.6+rng()*1.2; }
       else if(t===17){
         var e17=EMO17.slice();
         for(var x17=e17.length-1;x17>0;x17--){
@@ -425,7 +431,7 @@
       return p;
     }
     out[Math.floor(rng()*N)].golden=true;
-    var pool=[8,10,11,13,15,16,17,18];
+    var pool=[8,10,11,13,15,16,17,18,20,21,22];
     for(var pb=pool.length-1;pb>0;pb--){
       var qb=Math.floor(rng()*(pb+1)), tb=pool[pb]; pool[pb]=pool[qb]; pool[qb]=tb;
     }
@@ -1042,6 +1048,90 @@
         }
       };
       later(function(){ if(!done) finish(taps19.length*10,taps19.length+'/4 toques'); },dur-60);
+    }
+
+    else if(g.t===20){ // RODA
+      var t20=performance.now();
+      area.innerHTML='<div class="gtitle" style="font-size:1.4rem;margin-bottom:18px">PARA NA JANELA! 🎡</div>'+
+        '<div id="wheel" style="position:relative;width:210px;height:210px;border-radius:50%;border:1px solid var(--border);'+
+        'background:conic-gradient(from '+g.wedge+'deg, rgba(255,204,77,.85) 0 36deg, var(--panel) 36deg 360deg)">'+
+        '<div id="needle" style="position:absolute;left:50%;top:50%;width:5px;height:96px;margin-left:-2.5px;'+
+        'background:var(--cy);border-radius:3px;transform-origin:2.5px 0px"></div>'+
+        '<div style="position:absolute;left:50%;top:50%;width:16px;height:16px;margin:-8px 0 0 -8px;border-radius:50%;background:var(--line)"></div></div>';
+      var nd=$('needle');
+      function spin20(){
+        if(done) return;
+        var ang=(g.ph+g.speed*360*(performance.now()-t20)/1000)%360;
+        nd.style.transform='rotate('+ang+'deg)';
+        nd.dataset.a=ang;
+        S.raf=requestAnimationFrame(spin20);
+      }
+      S.raf=requestAnimationFrame(spin20);
+      area.onpointerdown=function(){
+        if(done) return;
+        var ang=parseFloat(nd.dataset.a||'0');
+        var point=(180+ang)%360, ctr=(g.wedge+18)%360;
+        var d=Math.abs(point-ctr); if(d>180) d=360-d;
+        var pts=Math.max(0,Math.round(100-d*1.6));
+        finish(pts, pts>=85?'NA JANELA! 🎡':Math.round(d)+'° fora');
+        nd.style.background=pts>=85?'var(--gold)':(pts>0?'var(--ok)':'var(--bad)');
+        beep(pts>=85?1400:500,.12,'triangle',.12);
+      };
+    }
+    else if(g.t===21){ // PARE EM…
+      var t21=performance.now();
+      area.innerHTML='<div class="q" style="margin-bottom:14px">PARE EM <span style="color:var(--gold)">'+g.tgt+'</span></div>'+
+        '<div style="position:relative;width:88%;max-width:400px;height:44px;background:var(--panel);border:1px solid var(--border);border-radius:10px">'+
+        '<div id="fillb" style="position:absolute;left:0;top:0;bottom:0;width:0%;background:var(--cy);border-radius:10px 0 0 10px"></div>'+
+        '<div style="position:absolute;left:'+g.tgt+'%;top:-9px;bottom:-9px;width:3px;background:var(--gold)"></div></div>'+
+        '<div class="ginstr" id="v21" style="font-variant-numeric:tabular-nums;font-size:1.6rem;font-weight:800;margin-top:14px">0</div>';
+      var fb=$('fillb'), vl=$('v21');
+      function fill21(){
+        if(done) return;
+        var el=(performance.now()-t21)/1000;
+        var val=100*(1-Math.abs(((el*g.spd*2)%2)-1));
+        fb.style.width=val+'%';
+        vl.textContent=Math.round(val);
+        fb.dataset.v=val;
+        S.raf=requestAnimationFrame(fill21);
+      }
+      S.raf=requestAnimationFrame(fill21);
+      area.onpointerdown=function(){
+        if(done) return;
+        var val=Math.round(parseFloat(fb.dataset.v||'0'));
+        var diff=Math.abs(val-g.tgt);
+        var pts=Math.max(0,100-Math.round(diff*3.2));
+        finish(pts,'parou em '+val+(diff<=2?' — CIRÚRGICO! ⚡':' (alvo '+g.tgt+')'));
+        fb.style.background=pts>=85?'var(--gold)':(pts>0?'var(--ok)':'var(--bad)');
+        beep(pts>=85?1400:500,.12,'triangle',.12);
+      };
+    }
+    else if(g.t===22){ // COLISÃO
+      var t22=performance.now();
+      area.innerHTML='<div class="gtitle" style="font-size:1.4rem;margin-bottom:18px">TOQUE NO CRUZAMENTO! 🤝</div>'+
+        '<div id="tr22" style="position:relative;width:88%;max-width:400px;height:64px;background:var(--panel);border:1px solid var(--border);border-radius:14px">'+
+        '<div id="bA" style="position:absolute;top:6px;bottom:6px;width:26px;border-radius:8px;background:var(--cy);left:50%;margin-left:-13px"></div>'+
+        '<div id="bB" style="position:absolute;top:6px;bottom:6px;width:26px;border-radius:8px;background:var(--accent);left:50%;margin-left:-13px"></div></div>';
+      var tr=$('tr22'), bA=$('bA'), bB=$('bB');
+      function move22(){
+        if(done) return;
+        var w=2*Math.PI*g.spd*(performance.now()-t22)/1000;
+        var ax=Math.sin(g.ph+w), bx=-Math.sin(g.ph+g.dphi+w);
+        var half=tr.clientWidth/2-16;
+        bA.style.transform='translateX('+(ax*half)+'px)';
+        bB.style.transform='translateX('+(bx*half)+'px)';
+        bA.dataset.d=Math.abs(ax-bx)/2;
+        S.raf=requestAnimationFrame(move22);
+      }
+      S.raf=requestAnimationFrame(move22);
+      area.onpointerdown=function(){
+        if(done) return;
+        var d=parseFloat(bA.dataset.d||'1');
+        var pts=Math.max(0,100-Math.round(d*150));
+        finish(pts, pts>=85?'CRAVOU O CRUZAMENTO! 🤝':Math.round(d*100)+'% separados');
+        bA.style.background=bB.style.background=pts>=85?'var(--gold)':(pts>0?'var(--ok)':'var(--bad)');
+        beep(pts>=85?1400:500,.12,'triangle',.12);
+      };
     }
 
     // fim do slot — SEMPRE no mesmo instante em todos os celulares
