@@ -5,6 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 <meta name="theme-color" content="#0d0b1e">
 <title>GAUNTLET ⚡</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Russo+One&family=Chakra+Petch:wght@600;700&display=swap" rel="stylesheet">
 </head>
 <body>
 <style>
@@ -136,14 +139,55 @@
   .tvmode #rk-status{font-size:1.15rem;color:var(--cy)}
   .tvmode td{font-size:1.5rem;padding:16px 10px}
   .tvmode th{font-size:.9rem}
-  @media (prefers-reduced-motion: reduce){ .btn{transition:none} }
+  /* ---- v5.5 design pass ---- */
+  body{background:
+    radial-gradient(1100px 520px at 50% -10%, rgba(255,61,129,.16), transparent 60%),
+    radial-gradient(900px 520px at 85% 112%, rgba(34,211,238,.12), transparent 60%),
+    var(--bg)}
+  body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:60;
+    background:repeating-linear-gradient(0deg,rgba(255,255,255,.016) 0 1px,transparent 1px 3px)}
+  h1,.gtitle,.gain,.gainlbl,.bignum,#count,#rd-room,.btn,.gnum,.q,#g-label{
+    font-family:'Russo One',system-ui,sans-serif;font-style:normal;font-weight:400}
+  #mycode,td,.gscore,#v21,.arrowline{font-family:'Chakra Petch','Russo One',system-ui,sans-serif;font-weight:700}
+  h1{letter-spacing:.01em}
+  h1 .em{text-shadow:0 0 22px rgba(255,61,129,.55)}
+  .btn-go{background:linear-gradient(135deg,#ff6b9e,#ff2d74);box-shadow:0 6px 0 #9c1f4e,0 0 26px rgba(255,61,129,.35)}
+  .btn-go:active{transform:translateY(3px) scale(.99);box-shadow:0 2px 0 #9c1f4e}
+  .btn-cy{background:linear-gradient(135deg,#5ce2f5,#0fb6d4);color:#03242c;box-shadow:0 6px 0 #0a7f94}
+  .btn-cy:active{transform:translateY(3px) scale(.99);box-shadow:0 2px 0 #0a7f94}
+  #b-host{animation:glowp 2.4s ease-in-out infinite}
+  #gbar{height:6px}
+  #gbar i{background:linear-gradient(90deg,var(--cy),var(--accent));transition:width .45s ease;
+    box-shadow:0 0 12px rgba(34,211,238,.6)}
+  #rd-room{background:var(--panel);border:1px dashed var(--gold);border-radius:14px;
+    padding:8px 28px;box-shadow:0 0 30px rgba(255,204,77,.15)}
+  .gain{animation:pop .38s cubic-bezier(.2,1.7,.4,1)}
+  .cp{animation:cpulse .5s cubic-bezier(.2,1.7,.4,1)}
+  #garea.shake{animation:shake .4s}
+  #garea.ouch{animation:ouch .45s}
+  .gchip.gold{color:var(--gold);border-color:rgba(255,204,77,.55)}
+  tr.top{background:linear-gradient(90deg,rgba(255,204,77,.1),transparent)}
+  #ghud .gscore{text-shadow:0 0 14px rgba(255,204,77,.4)}
+  .confetti{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:70}
+  .confetti i{position:absolute;top:-5%;width:10px;height:14px;border-radius:2px;
+    animation:cfall linear forwards}
+  @keyframes pop{0%{transform:scale(.35);opacity:0}60%{transform:scale(1.18)}100%{transform:scale(1);opacity:1}}
+  @keyframes cpulse{0%{transform:scale(1.6);opacity:.2}100%{transform:scale(1);opacity:1}}
+  @keyframes shake{0%,100%{transform:translate(0)}20%{transform:translate(-9px,4px)}40%{transform:translate(8px,-4px)}60%{transform:translate(-6px,3px)}80%{transform:translate(4px,-2px)}}
+  @keyframes ouch{0%{box-shadow:inset 0 0 0 0 rgba(255,90,72,0)}30%{box-shadow:inset 0 0 60px 14px rgba(255,90,72,.5)}100%{box-shadow:inset 0 0 0 0 rgba(255,90,72,0)}}
+  @keyframes glowp{0%,100%{box-shadow:0 6px 0 #0a7f94,0 0 16px rgba(34,211,238,.3)}50%{box-shadow:0 6px 0 #0a7f94,0 0 36px rgba(34,211,238,.75)}}
+  @keyframes cfall{to{transform:translateY(112vh) rotate(720deg)}}
+  @media (prefers-reduced-motion: reduce){
+    .btn{transition:none}
+    .gain,.cp,#garea.shake,#garea.ouch,.confetti i,#b-host,#gbar i{animation:none!important;transition:none!important}
+  }
 </style>
 
 <div id="app">
 
   <!-- HOME -->
   <div class="scr on" id="scr-home">
-    <p class="eyebrow">7 celulares · 1 mesa · 0 desculpas · <b style="color:var(--cy)">V5.4 ONLINE 🌐</b></p>
+    <p class="eyebrow">7 celulares · 1 mesa · 0 desculpas · <b style="color:var(--cy)">V5.5 ONLINE 🌐</b></p>
     <h1>GAUNT<span class="em">LET</span> ⚡</h1>
     <p class="sub">15 micro-desafios sorteados de <b style="color:var(--ink)">16 tipos</b> + um
       <b style="color:var(--bad)">👹 BOSS FINAL</b> de 3 desafios brutais valendo 2× em velocidade
@@ -174,7 +218,7 @@
   <div class="scr" id="scr-ready">
     <div id="rd-round">Rodada 1</div>
     <div id="rd-room">SALA</div>
-    <div style="color:var(--accent);font-size:.78rem;font-weight:800;letter-spacing:.18em;margin-bottom:8px">V5.4 ONLINE 🌐 — LARGADA SINCRONIZADA</div>
+    <div style="color:var(--accent);font-size:.78rem;font-weight:800;letter-spacing:.18em;margin-bottom:8px">V5.5 ONLINE 🌐 — LARGADA SINCRONIZADA</div>
     <p class="sub" style="text-align:center">Todo mundo pronto nesta tela?<br>
       No grito de <b style="color:var(--ink)">"VAI!"</b>, todos tocam JOGAR ao mesmo tempo.</p>
     <div id="count">3</div>
@@ -236,7 +280,7 @@
 (function(){
   'use strict';
   var $=function(id){return document.getElementById(id)};
-  var N=15, TYPES=23, TOT=18, VER='v5.4'; // fora do sorteio: 1 (NÃO TOQUE) e 17 (OLHO VIVO)
+  var N=15, TYPES=23, TOT=18, VER='v5.5'; // fora do sorteio: 1 (NÃO TOQUE) e 17 (OLHO VIVO)
   var DUR =[4000,3500,4000,3000,5800,3500,4000,5000,3500,4000,5000,7500,5000,4500,5000,4500,4200,5000,5000,5200,4000,3800,4000];
   var GNAME=['VERDE!','NÃO TOQUE!','CALCULA!','ESMAGA!','MEMORIZA!','NO CENTRO!','O DIFERENTE!','1 AO 5!',
              'A TINTA!','O MAIOR!','MIRA!','ARRASTA!','CONTA!','CONTRÁRIO!','SEGURA 3s!','PAR OU ÍMPAR!',
@@ -474,6 +518,21 @@
     return Math.round(100-(el-fast)/(slow-fast)*(100-floor));
   }
   function secs(el){ return (el/1000).toFixed(1)+'s'; }
+  function setCount(el,txt){ el.textContent=txt; el.classList.remove('cp'); void el.offsetWidth; el.classList.add('cp'); }
+  function confetti(){
+    var box=document.createElement('div'); box.className='confetti';
+    var cols=['#ff3d81','#22d3ee','#ffcc4d','#3ddc6e','#f2eefc'];
+    for(var ci=0;ci<44;ci++){
+      var pc=document.createElement('i');
+      pc.style.left=(Math.random()*100)+'%';
+      pc.style.background=cols[ci%cols.length];
+      pc.style.animationDelay=(Math.random()*0.9)+'s';
+      pc.style.animationDuration=(2.2+Math.random()*1.6)+'s';
+      box.appendChild(pc);
+    }
+    document.body.appendChild(box);
+    setTimeout(function(){ if(box.parentNode) box.parentNode.removeChild(box); },4800);
+  }
   function clearTimers(){ S.timers.forEach(clearTimeout); S.timers=[]; if(S.raf) cancelAnimationFrame(S.raf); S.raf=null; }
 
   // ---------- flow ----------
@@ -504,13 +563,13 @@
     $('b-start').style.display='none';
     var c=$('count'); c.style.display='block';
     var n=3;
-    c.textContent=n; beep(600,.1);
+    setCount(c,n); beep(600,.1);
     var iv=setInterval(function(){
       n--;
-      if(n>0){ c.textContent=n; beep(600,.1); }
+      if(n>0){ setCount(c,n); beep(600,.1); }
       else{
         clearInterval(iv);
-        c.textContent='VAI!'; beep(1200,.25,'square',.15);
+        setCount(c,'VAI!'); beep(1200,.25,'square',.15);
         setTimeout(function(){ show('scr-game'); runGame(); },500);
       }
     },1000);
@@ -1169,6 +1228,9 @@
       '<div class="gainlbl '+cls+'">'+word+'</div>'+extra+
       '<div class="ginstr">'+esc(r.lbl||'')+'</div></div>';
     $('g-score').textContent=S.total+' pts'+(S.streak>=2?' 🔥'+S.streak:'');
+    area.classList.remove('shake','ouch'); void area.offsetWidth;
+    if(r.base>=80) area.classList.add('shake');
+    else if(r.base===0) area.classList.add('ouch');
     if(r.pts>=80) beep(1600,.2,'triangle',.12);
     later(function(){
       S.i++;
@@ -1211,10 +1273,11 @@
       ' · Calcanhar: '+GICON[S.sched[wi].t]+GNAME[S.sched[wi].t];
     var h='';
     S.scores.forEach(function(p,i){
-      h+='<span class="gchip'+(p===0?' zero':'')+'">'+GICON[S.sched[i].t]+' '+p+'</span>';
+      h+='<span class="gchip'+(p===0?' zero':(p>=80?' gold':''))+'">'+GICON[S.sched[i].t]+' '+p+'</span>';
     });
     $('chips').innerHTML=h;
     $('mycode').textContent=enc(S.total,S.round);
+    if(S.total>=1500) confetti();
     addRank(S.name,S.round,S.total);
     var ps=$('pubstat');
     ps.textContent=TOKEN?'publicando no ranking…':'link sem token — ranking manual pelo código reserva';
@@ -1251,7 +1314,8 @@
     rows.sort(function(a,b){ return b.total-a.total; });
     var h='<table><tr><th>Jogador</th><th>Rodadas</th><th>Última</th><th>Total</th></tr>';
     rows.forEach(function(r,i){
-      h+='<tr'+(i===0?' class="top"':'')+'><td>'+(i===0?'👑 ':'')+esc(r.name)+'</td><td>'+r.rounds+
+      var md=['🥇 ','🥈 ','🥉 '][i]||'';
+      h+='<tr'+(i===0?' class="top"':'')+'><td>'+md+esc(r.name)+'</td><td>'+r.rounds+
          '</td><td>'+r.last+'</td><td>'+r.total+'</td></tr>';
     });
     $('rtable').innerHTML=h+'</table>';
@@ -1318,13 +1382,13 @@
     function tickC(){
       var left=at-Date.now();
       if(left<=0){
-        c.textContent='VAI!'; beep(1200,.25,'square',.15);
+        setCount(c,'VAI!'); beep(1200,.25,'square',.15);
         S.sched=buildSchedule(S.room,S.round);
         S.i=0; S.scores=[]; S.total=0; S.streak=0; S.armed=false;
         setTimeout(function(){ show('scr-game'); runGame(); },400);
         return;
       }
-      c.textContent=Math.ceil(left/1000);
+      setCount(c,Math.ceil(left/1000));
       beep(600,.1);
       setTimeout(tickC,(left%1000)||1000);
     }
