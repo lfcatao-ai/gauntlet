@@ -28,3 +28,12 @@ como banco de dados (via GitHub API).
 - **Limpar o placar da noite:** apagar os arquivos de `scores/` (ou só os da sala).
 - **Nova versão do jogo:** editar `index.html`; o Pages atualiza sozinho em ~1 min.
   O badge de versão na tela inicial existe pra mesa conferir que todos deram refresh.
+
+## v5
+
+- **Largada sincronizada:** na tela da arena, o host toca "📡 Largada sincronizada" — todos os
+  celulares da sala (que estejam na arena, com link com token) contam regressiva pro mesmo
+  instante de relógio. O botão "▶ Jogar (no grito)" segue como fallback.
+- **Modo TV:** abrir `…/gauntlet/#tv&room=SUASALA&t=TOKEN` num navegador qualquer vira placar
+  gigante ao vivo da sala (atualiza a cada 4s).
+- 4 desafios novos: 🎈 ENCOLHE (push-your-luck), 👀 OLHO VIVO, 🔠 SOLETRA, 🎵 NO RITMO.

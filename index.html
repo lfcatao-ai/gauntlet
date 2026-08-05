@@ -131,6 +131,11 @@
   .addrow .btn{width:auto;margin:0;padding:14px 20px}
   .tiny{background:none;border:none;color:var(--muted);font-family:inherit;font-size:.78rem;
     font-weight:700;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;padding:6px 0}
+  .tvmode label,.tvmode .addrow,.tvmode .back,.tvmode .tiny,.tvmode .err{display:none}
+  .tvmode #scr-rank h1{font-size:3.2rem}
+  .tvmode #rk-status{font-size:1.15rem;color:var(--cy)}
+  .tvmode td{font-size:1.5rem;padding:16px 10px}
+  .tvmode th{font-size:.9rem}
   @media (prefers-reduced-motion: reduce){ .btn{transition:none} }
 </style>
 
@@ -138,7 +143,7 @@
 
   <!-- HOME -->
   <div class="scr on" id="scr-home">
-    <p class="eyebrow">7 celulares · 1 mesa · 0 desculpas · <b style="color:var(--cy)">V4 ONLINE 🌐</b></p>
+    <p class="eyebrow">7 celulares · 1 mesa · 0 desculpas · <b style="color:var(--cy)">V5 ONLINE 🌐</b></p>
     <h1>GAUNT<span class="em">LET</span> ⚡</h1>
     <p class="sub">15 micro-desafios sorteados de <b style="color:var(--ink)">16 tipos</b> + um
       <b style="color:var(--bad)">👹 BOSS FINAL</b> de 3 desafios brutais valendo 2× em velocidade
@@ -164,11 +169,13 @@
   <div class="scr" id="scr-ready">
     <div id="rd-round">Rodada 1</div>
     <div id="rd-room">SALA</div>
-    <div style="color:var(--accent);font-size:.78rem;font-weight:800;letter-spacing:.18em;margin-bottom:8px">V4 ONLINE 🌐 — RANKING AUTOMÁTICO</div>
+    <div style="color:var(--accent);font-size:.78rem;font-weight:800;letter-spacing:.18em;margin-bottom:8px">V5 ONLINE 🌐 — LARGADA SINCRONIZADA</div>
     <p class="sub" style="text-align:center">Todo mundo pronto nesta tela?<br>
       No grito de <b style="color:var(--ink)">"VAI!"</b>, todos tocam JOGAR ao mesmo tempo.</p>
     <div id="count">3</div>
-    <button class="btn btn-go" id="b-start" style="max-width:300px">▶ Jogar</button>
+    <button class="btn btn-cy" id="b-host" style="max-width:300px">📡 Largada sincronizada</button>
+    <button class="btn btn-go" id="b-start" style="max-width:300px">▶ Jogar (no grito)</button>
+    <p class="err" id="lobby" style="color:var(--cy);text-align:center"></p>
     <button class="tiny" id="b-home1">← voltar</button>
   </div>
 
@@ -223,10 +230,11 @@
 (function(){
   'use strict';
   var $=function(id){return document.getElementById(id)};
-  var N=15, TYPES=16, TOT=18, VER='v4'; // tipo 1 (NÃO TOQUE) fora do sorteio
-  var DUR =[4000,3500,4000,3000,5800,3500,4000,5000,3500,4000,5000,4500,5000,4500,5000,4500];
+  var N=15, TYPES=20, TOT=18, VER='v5'; // tipo 1 (NÃO TOQUE) fora do sorteio
+  var DUR =[4000,3500,4000,3000,5800,3500,4000,5000,3500,4000,5000,4500,5000,4500,5000,4500,4200,5000,5000,5200];
   var GNAME=['VERDE!','NÃO TOQUE!','CALCULA!','ESMAGA!','MEMORIZA!','NO CENTRO!','O DIFERENTE!','1 AO 5!',
-             'A TINTA!','O MAIOR!','MIRA!','ARRASTA!','CONTA!','CONTRÁRIO!','SEGURA 3s!','PAR OU ÍMPAR!'];
+             'A TINTA!','O MAIOR!','MIRA!','ARRASTA!','CONTA!','CONTRÁRIO!','SEGURA 3s!','PAR OU ÍMPAR!',
+             'ENCOLHE!','OLHO VIVO!','SOLETRA!','NO RITMO!'];
   var GINST=['Toque quando a tela ficar VERDE',
              'Resista. NÃO toque em nada!',
              'Toque na resposta certa',
@@ -242,8 +250,15 @@
              'Conte rápido e responda',
              'Deslize pro lado OPOSTO da seta',
              'Solte em EXATOS 3 segundos',
-             'Classifique os 3 números'];
-  var GICON=['🟢','🚫','🧮','👊','🧠','🎯','🔍','🔢','🎨','📈','🏹','👉','🍕','🙃','⌛','🎲'];
+             'Classifique os 3 números',
+             'Quanto mais esperar, mais vale… até estourar',
+             'Decore a grade — toque no que MUDOU',
+             'Toque as letras na ordem da palavra',
+             'Toque 4 vezes no compasso da pulsação'];
+  var GICON=['🟢','🚫','🧮','👊','🧠','🎯','🔍','🔢','🎨','📈','🏹','👉','🍕','🙃','⌛','🎲','🎈','👀','🔠','🎵'];
+  var EMO17=['🍕','⚽','🐸','⭐','🍺','👾','🎩','🍇','🚀','🦄','🍩','🐙'];
+  var WORDS=['BOLA','GALO','MESA','LUAR','VELA','RATO','PATO','CEDO'];
+  var CONS='BCDFGHJKMNPQSVXZ';
   var COLS=[['VERMELHO','#ff5a48'],['VERDE','#3ddc6e'],['AZUL','#4aa8ff'],['AMARELO','#ffcc4d']];
   var CEMO=['🍕','⚽','🐸','⭐','🍺','👾'];
   var ARROWS=['←','↑','↓','→'];
@@ -374,10 +389,38 @@
         p.nums3=[];
         for(var m15=0;m15<3;m15++) p.nums3.push(10+Math.floor(rng()*90));
       }
+      else if(t===16){ p.vanish=0.55+rng()*0.35; }
+      else if(t===17){
+        var e17=EMO17.slice();
+        for(var x17=e17.length-1;x17>0;x17--){
+          var y17=Math.floor(rng()*(x17+1)), z17=e17[x17]; e17[x17]=e17[y17]; e17[y17]=z17;
+        }
+        p.g9=e17.slice(0,9); p.newe=e17[9]; p.chg=Math.floor(rng()*9);
+      }
+      else if(t===18){
+        p.word=WORDS[Math.floor(rng()*WORDS.length)];
+        var dks=[];
+        while(dks.length<4){
+          var dk=CONS[Math.floor(rng()*CONS.length)];
+          if(p.word.indexOf(dk)<0 && dks.indexOf(dk)<0) dks.push(dk);
+        }
+        var lets=[];
+        for(var w18=0;w18<4;w18++) lets.push({c:p.word[w18],ord:w18});
+        dks.forEach(function(d18){ lets.push({c:d18,ord:-1}); });
+        for(var s18=lets.length-1;s18>0;s18--){
+          var j18=Math.floor(rng()*(s18+1)), t18x=lets[s18]; lets[s18]=lets[j18]; lets[j18]=t18x;
+        }
+        p.lets=lets;
+        var c18=[0,1,2,3,4,5,6,7,8];
+        for(var a18=c18.length-1;a18>0;a18--){
+          var b18=Math.floor(rng()*(a18+1)), q18=c18[a18]; c18[a18]=c18[b18]; c18[b18]=q18;
+        }
+        p.cells=c18.slice(0,8);
+      }
       return p;
     }
     out[Math.floor(rng()*N)].golden=true;
-    var pool=[8,10,11,13,15];
+    var pool=[8,10,11,13,15,16,17,18];
     for(var pb=pool.length-1;pb>0;pb--){
       var qb=Math.floor(rng()*(pb+1)), tb=pool[pb]; pool[pb]=pool[qb]; pool[qb]=tb;
     }
@@ -406,6 +449,7 @@
     $(id).classList.add('on');
     window.scrollTo(0,0);
     syncPoll(id==='scr-rank');
+    lobbyPoll(id==='scr-ready');
   }
   function esc(s){ return String(s).replace(/[<>&"]/g,function(c){return {'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;'}[c];}); }
   function later(fn,ms){ S.timers.push(setTimeout(fn,ms)); }
@@ -432,6 +476,9 @@
     $('rd-room').textContent=S.room;
     $('count').style.display='none';
     $('b-start').style.display='block';
+    $('b-host').style.display='block';
+    $('lobby').textContent=TOKEN?'aguardando largada do host…':'sem token no link — largada no grito';
+    S.armed=false;
     show('scr-ready');
   }
   $('b-start').addEventListener('click',function(){
@@ -874,6 +921,124 @@
       later(function(){ if(!done) finish(got15*25,got15+'/3 certos'); },dur-60);
     }
 
+    else if(g.t===16){ // ENCOLHE (push-your-luck)
+      var t16=performance.now(), vanAt=Math.round(dur*g.vanish), gone16=false;
+      area.innerHTML='<div class="gtitle" style="position:absolute;top:14px;left:0;right:0;font-size:1.2rem;color:var(--muted)">SEGURA O QUANTO AGUENTAR… E TOCA!</div>'+
+        '<button class="bigmash" id="shr" style="background:radial-gradient(circle at 35% 30%,#ffe08a,var(--gold) 70%);box-shadow:0 10px 0 #8a6d1f;color:#241a02">20</button>';
+      var sb=$('shr');
+      function shrink(){
+        if(done||gone16) return;
+        var f=(performance.now()-t16)/vanAt;
+        if(f>=1){
+          gone16=true; sb.style.visibility='hidden';
+          finish(0,'ESTOUROU! 🎈💥'); beep(150,.3,'sawtooth',.15);
+          return;
+        }
+        var val=20+Math.round(f*80);
+        sb.dataset.val=val; sb.textContent=val;
+        sb.style.transform='scale('+(1-0.72*f)+')';
+        S.raf=requestAnimationFrame(shrink);
+      }
+      S.raf=requestAnimationFrame(shrink);
+      sb.onpointerdown=function(){
+        if(done||gone16) return;
+        var v=+sb.dataset.val||20;
+        finish(v, v>=85?'FRIEZA TOTAL! 🎈':'embolsou '+v);
+        beep(900,.12,'triangle',.12);
+      };
+    }
+    else if(g.t===17){ // OLHO VIVO
+      var t17=0, armed17=false;
+      function grid17(arr){
+        var h17='<div class="gtitle" id="g17lbl" style="font-size:1.4rem;margin-bottom:12px">DECORA… 👀</div>'+
+          '<div class="emojigrid" style="grid-template-columns:repeat(3,1fr);max-width:300px'+(armed17?'':';pointer-events:none')+'">';
+        arr.forEach(function(e17x,i17){ h17+='<button data-i="'+i17+'" style="font-size:2rem;padding:14px 0">'+e17x+'</button>'; });
+        area.innerHTML=h17+'</div>';
+      }
+      grid17(g.g9);
+      later(function(){
+        if(done) return;
+        armed17=true;
+        var arr2=g.g9.slice(); arr2[g.chg]=g.newe;
+        grid17(arr2);
+        $('g17lbl').textContent='O QUE MUDOU?!';
+        t17=performance.now();
+        beep(1100,.08,'square',.1);
+        var bs17=area.querySelectorAll('.emojigrid button');
+        for(var k17=0;k17<bs17.length;k17++){
+          bs17[k17].onpointerdown=function(e){
+            if(done) return;
+            if(+e.currentTarget.getAttribute('data-i')===g.chg){
+              var el17=performance.now()-t17;
+              finish(Math.max(40,Math.min(100,Math.round(100-(el17-900)/21))),'ACHOU em '+secs(el17));
+              e.currentTarget.style.background='var(--ok)';
+              beep(1000,.12,'triangle',.12);
+            } else {
+              finish(0,'esse não mudou 💀');
+              e.currentTarget.style.background='var(--bad)';
+              beep(160,.3,'sawtooth',.15);
+            }
+          };
+        }
+      },1600);
+    }
+    else if(g.t===18){ // SOLETRA
+      var next18=0, t18s=performance.now();
+      area.innerHTML='<div class="gtitle" style="position:absolute;top:14px;left:0;right:0;font-size:1.6rem;color:var(--cy)">'+g.word+'</div>';
+      g.cells.forEach(function(cell,idx){
+        var col=cell%3, row=Math.floor(cell/3);
+        var L=g.lets[idx];
+        var b=document.createElement('button');
+        b.className='numbtn'; b.textContent=L.c;
+        b.style.fontSize='1.4rem';
+        b.style.left='calc('+(col*33+16.5)+'% - 32px)';
+        b.style.top='calc('+(row*30+22)+'% - 32px)';
+        b.onpointerdown=function(){
+          if(done) return;
+          if(L.ord===next18){
+            b.classList.add('hit'); next18++;
+            beep(500+next18*140,.07,'triangle',.09);
+            if(next18>=4){
+              var el18=performance.now()-t18s;
+              finish(spd(el18,1800,dur-300,55),g.word+' em '+secs(el18));
+            }
+          } else beep(180,.12,'sawtooth',.1);
+        };
+        area.appendChild(b);
+      });
+      later(function(){ if(!done) finish(next18*12,next18+'/4 letras'); },dur-60);
+    }
+    else if(g.t===19){ // NO RITMO
+      var t19=performance.now(), taps19=[], lastBeat=-1, PER=600;
+      area.innerHTML='<div class="gtitle" style="position:absolute;top:14px;left:0;right:0;font-size:1.3rem;color:var(--muted)">SINTA O PULSO… 4 TOQUES NO COMPASSO</div>'+
+        '<div id="pulse" style="width:150px;height:150px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#7ee5f5,var(--cy) 70%)"></div>'+
+        '<div class="ginstr" id="tapc" style="margin-top:18px">0/4</div>';
+      var pu=$('pulse');
+      function pulse19(){
+        if(done) return;
+        var el=performance.now()-t19;
+        var b19=Math.floor(el/PER);
+        if(b19!==lastBeat){ lastBeat=b19; beep(880,.05,'square',.09); }
+        var s19=1+0.28*Math.pow(Math.max(0,Math.cos(Math.PI*2*el/PER)),3);
+        pu.style.transform='scale('+s19+')';
+        S.raf=requestAnimationFrame(pulse19);
+      }
+      S.raf=requestAnimationFrame(pulse19);
+      area.onpointerdown=function(){
+        if(done||taps19.length>=4) return;
+        var el=performance.now()-t19;
+        if(el<1150) return; // dois pulsos de entrada
+        var off=el%PER; if(off>PER/2) off=off-PER;
+        taps19.push(Math.abs(off));
+        $('tapc').textContent=taps19.length+'/4';
+        if(taps19.length>=4){
+          var avg=Math.round(taps19.reduce(function(a,b){return a+b;},0)/4);
+          finish(Math.max(0,100-Math.round(avg/1.8)),'desvio médio '+avg+'ms');
+        }
+      };
+      later(function(){ if(!done) finish(taps19.length*10,taps19.length+'/4 toques'); },dur-60);
+    }
+
     // fim do slot — SEMPRE no mesmo instante em todos os celulares
     later(function(){
       if(!done) finish(result.pts,result.lbl||'TEMPO! ⏰');
@@ -1001,6 +1166,69 @@
   $('b-clear').addEventListener('click',function(){ rank=[]; save(); renderRank(); });
 
 
+  // ---------- largada sincronizada ----------
+  var lobbyIv=null;
+  function lobbyPoll(on){
+    if(lobbyIv){ clearInterval(lobbyIv); lobbyIv=null; }
+    if(on&&curRoom()){ lobbyCheck(); lobbyIv=setInterval(lobbyCheck,2500); }
+  }
+  function lobbyCheck(){
+    if(S.armed) return;
+    fetch(API+'/repos/'+OWNER+'/'+REPO+'/contents/rooms/'+curRoom()+'.json?ts='+Date.now(),{headers:hdr(),cache:'no-store'})
+      .then(function(r){ if(!r.ok) throw 0; return r.json(); })
+      .then(function(f){
+        var d=JSON.parse(atob((f.content||'').replace(/\n/g,'')));
+        if(d.at && d.at>Date.now()+300 && !S.armed){
+          S.armed=true; S.round=d.round||S.round;
+          armStart(d.at);
+        }
+      }).catch(function(){});
+  }
+  function hostStart(){
+    if(!TOKEN){ $('lobby').textContent='pra ser host precisa do link com token'; return; }
+    audio();
+    var path='rooms/'+curRoom()+'.json';
+    var at=Date.now()+9000;
+    $('lobby').textContent='marcando largada…';
+    fetch(API+'/repos/'+OWNER+'/'+REPO+'/contents/'+path,{headers:hdr(),cache:'no-store'})
+      .then(function(r){ return r.ok?r.json():null; })
+      .then(function(f){
+        var body={message:'start '+curRoom()+' r'+S.round,
+          content:btoa(JSON.stringify({round:S.round,at:at}))};
+        if(f&&f.sha) body.sha=f.sha;
+        return fetch(API+'/repos/'+OWNER+'/'+REPO+'/contents/'+path,
+          {method:'PUT',headers:hdr(),body:JSON.stringify(body)});
+      })
+      .then(function(r){
+        if(r&&r.ok){ if(!S.armed){ S.armed=true; armStart(at); } }
+        else $('lobby').textContent='falha ao marcar ('+(r?('HTTP '+r.status):'rede')+')';
+      })
+      .catch(function(){ $('lobby').textContent='sem rede'; });
+  }
+  function armStart(at){
+    if(lobbyIv){ clearInterval(lobbyIv); lobbyIv=null; }
+    audio();
+    $('b-start').style.display='none';
+    $('b-host').style.display='none';
+    $('lobby').textContent='LARGADA SINCRONIZADA — segura o celular!';
+    $('rd-round').textContent='Rodada '+S.round;
+    var c=$('count'); c.style.display='block';
+    function tickC(){
+      var left=at-Date.now();
+      if(left<=0){
+        c.textContent='VAI!'; beep(1200,.25,'square',.15);
+        S.sched=buildSchedule(S.room,S.round);
+        S.i=0; S.scores=[]; S.total=0; S.streak=0; S.armed=false;
+        setTimeout(function(){ show('scr-game'); runGame(); },400);
+        return;
+      }
+      c.textContent=Math.ceil(left/1000);
+      beep(600,.1);
+      setTimeout(tickC,(left%1000)||1000);
+    }
+    tickC();
+  }
+
   // ---------- sync via GitHub (ranking automático) ----------
   var API='https://api.github.com', OWNER='lfcatao-ai', REPO='gauntlet';
   var TOKEN='';
@@ -1043,7 +1271,7 @@
   }
   function syncPoll(on){
     if(pollIv){ clearInterval(pollIv); pollIv=null; }
-    if(on){ fetchScores(); pollIv=setInterval(fetchScores,8000); }
+    if(on){ fetchScores(); pollIv=setInterval(fetchScores,TV?4000:8000); }
   }
   function publishScore(room,round,name,total,cb){
     if(!TOKEN){ cb&&cb(false,'sem token'); return; }
@@ -1062,8 +1290,20 @@
   $('b-rank').addEventListener('click',function(){ renderRank(); show('scr-rank'); });
   $('b-home1').addEventListener('click',function(){ show('scr-home'); });
   $('b-home2').addEventListener('click',function(){ show('scr-home'); });
+  $('b-host').addEventListener('click',hostStart);
   var hs=$('homesync');
-  if(hs) hs.textContent = TOKEN ? '🌐 ranking automático: ATIVO' : '🌐 ranking automático: OFF — abra pelo link com token do grupo';
+  if(hs){
+    hs.textContent = TOKEN ? '🌐 ranking automático: ATIVO ✓' : '⚠️ SEM TOKEN — ranking e largada automáticos DESLIGADOS. Abra pelo link do grupo (com #t=…)';
+    hs.style.color = TOKEN ? 'var(--ok)' : 'var(--gold)';
+  }
+  var TV=false;
+  try{
+    var hp2=new URLSearchParams(location.hash.slice(1));
+    TV=hp2.has('tv');
+    var rm2=hp2.get('room');
+    if(rm2){ $('hroom').value=rm2.toUpperCase(); try{localStorage.setItem('gg-room',rm2.toUpperCase());}catch(e){} }
+  }catch(e){}
+  if(TV){ document.body.classList.add('tvmode'); show('scr-rank'); }
   renderRank();
 })();
 </script>
