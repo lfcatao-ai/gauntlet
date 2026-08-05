@@ -1298,7 +1298,7 @@
   $('b-host').addEventListener('click',hostStart);
   var hs=$('homesync');
   if(hs){
-    hs.textContent = TOKEN ? '🌐 ranking automático: ATIVO ✓' : '⚠️ SEM TOKEN — ranking e largada automáticos DESLIGADOS. Abra pelo link do grupo (com #t=…) ou cole o token abaixo';
+    hs.textContent = TOKEN ? '🌐 ranking automático: ATIVO ✓ (…'+TOKEN.slice(-4)+')' : '⚠️ SEM TOKEN — ranking e largada automáticos DESLIGADOS. Abra pelo link do grupo (com #t=…) ou cole o token abaixo';
     hs.style.color = TOKEN ? 'var(--ok)' : 'var(--gold)';
   }
   $('b-token').addEventListener('click',function(){
@@ -1307,11 +1307,13 @@
   });
   $('b-toksave').addEventListener('click',function(){
     var t=($('tokin').value||'').trim();
+    var m=/github_pat_[A-Za-z0-9_]+/.exec(t);
+    if(m) t=m[0];
     if(!t){ $('tokin').focus(); return; }
     TOKEN=t;
     try{ localStorage.setItem('gg-token',t); }catch(e){}
     $('tokin').value=''; $('tokrow').style.display='none';
-    if(hs){ hs.textContent='🌐 ranking automático: ATIVO ✓'; hs.style.color='var(--ok)'; }
+    if(hs){ hs.textContent='🌐 ranking automático: ATIVO ✓ (…'+TOKEN.slice(-4)+')'; hs.style.color='var(--ok)'; }
   });
   var TV=false;
   try{
